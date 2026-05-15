@@ -1,0 +1,32 @@
+Get http://localhost:3000/api/products
+
+### Create User Akane
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+  {
+  "username": "Akane",
+  "email" : "Akane@example.com",
+  "password" : "pass123"
+}
+### Create User Flogal
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "Flogal",
+  "email" : "Flogal@example.com",
+  "password" : "pass123"
+}
+
+### Update a user
+PUT http://localhost:3000/api/users/1
+Content-Type: application/json
+
+{
+  "username": "AshaNotZalt",
+  "email" : "AshaNotSalt@example.com",
+  "password" : "pass123"
+}
+### Delete a user
+DELETE http://localhost:3000/api/users/1
