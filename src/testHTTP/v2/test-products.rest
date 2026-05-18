@@ -1,0 +1,57 @@
+### Get all products (ดูสินค้าทั้งหมด)
+GET http://localhost:3000/api/v2/products
+
+### --------------------------------------------------
+
+### Create Product 1: Key-chain (สร้างพวงกุญแจ)
+POST http://localhost:3000/api/v2/products
+Content-Type: application/json
+
+{
+  "productId": "P001",
+  "productName": "Key-chain",
+  "price": 99
+}
+
+### --------------------------------------------------
+
+### Create Product 2: Legion-Laptop (สร้างโน้ตบุ๊ก)
+POST http://localhost:3000/api/v2/products
+Content-Type: application/json
+
+{
+  "productId": "P002",
+  "productName": "Legion-Laptop",
+  "price": 999
+}
+
+### --------------------------------------------------
+
+### Create Product 3: Bottle of Water (สร้างน้ำดื่ม)
+POST http://localhost:3000/api/v2/products
+Content-Type: application/json
+
+{
+  "productId": "P003",
+  "productName": "Bottle of Water",
+  "price": 9999
+}
+
+### --------------------------------------------------
+
+### Update a product (แก้ไขข้อมูลสินค้า)
+# หมายเหตุ: ตรงรหัสท้าย URL ให้เปลี่ยนเป็น `_id` (ObjectId) ที่ MongoDB เจนให้จริงๆ ตอนที่เธอกดโพสต์สินค้านะคะ
+PUT http://localhost:3000/api/v2/products/6a0a981cb793059aefe913c7
+Content-Type: application/json
+
+{
+  "productId": "P001",
+  "productName": "Key-chain Limited Edition",
+  "price": 150
+}
+
+### --------------------------------------------------
+
+### Delete a product (ลบสินค้า)
+# หมายเหตุ: ตรงรหัสท้าย URL ให้เปลี่ยนเป็น `_id` (ObjectId) ของสินค้าที่ต้องการลบจริงจากฐานข้อมูลค่ะ
+DELETE http://localhost:3000/api/v2/products/6a0a981cb793059aefe913c7
