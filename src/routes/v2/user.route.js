@@ -62,21 +62,20 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   const { username, email, password, role } = req.body || {};
 
-  if (!username || !email || !password) {
+  if (!username || !email) {
     return res
       .status(400)
-      .json({ success: false, error: "Missing username, email or password" });
+      .json({ success: false, error: "Missing username or email" });
   }
 
   try {
+    const updateData = { username, email };
+    if (password) updateData.password = password;
+    if (role) updateData.role = role;
+
     const updateUser = await User.findByIdAndUpdate(
       req.params.id,
-      {
-        username,
-        email,
-        password,
-        role,
-      },
+      updateData,
       { new: true, runValidators: true },
     );
 
@@ -91,8 +90,6 @@ router.put("/:id", async (req, res) => {
   } catch (error) {
     return res.status(400).json({ success: false, error: error.message });
   }
-
-  return res.status(200).json(user);
 });
 
 router.delete("/:id", async (req, res) => {
