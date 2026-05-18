@@ -157,58 +157,58 @@ router.post("/pg", async (req, res) => {
   }
 });
 
-// router.put("/pg/:id", async (req, res) => {
-//   const { username, email, password, role } = req.body || {};
+router.put("/pg/:id", async (req, res) => {
+  const { id } = req.params;
+  const { username, email, password, role } = req.body || {};
 
-//   if (!username || !email || !password) {
-//     return res
-//       .status(400)
-//       .json({ success: false, error: "Missing username, email or password" });
-//   }
+  try {
+    // ดึงข้อมูลเฉพาะตัวที่มีการส่งมาอัปเดต (ป้องกันการเอาค่า undefined ไปทับข้อมูลเก่า)
+    const updateData = {};
+    if (username) updateData.username = username;
+    if (email) updateData.email = email;
+    if (password) updateData.password = password;
+    if (role) updateData.role = role;
 
-//   try {
-//     const updateUser = await User.findByIdAndUpdate(
-//       req.params.id,
-//       {
-//         username,
-//         email,
-//         password,
-//         role,
-//       },
-//       { new: true, runValidators: true },
-//     );
+    // ตรวจสอบว่ามีข้อมูลส่งมาแก้ไขไหม
+    if (Object.keys(updateData).length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, error: "No data provided for update" });
+    }
 
-//     if (!updateUser) {
-//       return res.status(404).json({ error: "User not found" });
-//     }
+    const { data, error } = await supabase
+      .from("users")
+      .update(updateData)
+      .eq("id", id)
+      .select(PG_SELECT)
+      .single();
 
-//     return res.status(200).json({
-//       success: true,
-//       data: userResponse(updateUser),
-//     });
-//   } catch (error) {
-//     return res.status(400).json({ success: false, error: error.message });
-//   }
+    if (error) throw error;
 
-//   return res.status(200).json(user);
-// });
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
+  }
+});
 
-// router.delete("/pg/:id", async (req, res) => {
-//   try {
-//     // 1. ใช้ findByIdAndDelete เพื่อลบข้อมูลตาม ID
-//     const deletedUser = await User.findByIdAndDelete(req.params.id);
+router.delete("/pg/:id", async (req, res) => {
+  const { id } = req.params;
 
-//     // 2. ถ้าไม่เจอ User ที่ต้องการลบ
-//     if (!deletedUser) {
-//       return res.status(404).json({ success: false, error: "User not found" });
-//     }
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .delete()
+      .eq("id", id)
+      .select(PG_SELECT)
+      .single();
 
-//     return res.status(200).json({
-//       success: true,
-//       message: "Delete successful!",
-//       deletedData: userResponse(deletedUser),
-//     });
-//   } catch (error) {
-//     return res.status(400).json({ success: false, error: error.message });
-//   }
-// });
+    if (error) throw error;
+
+    // ส่งข้อมูลตัวที่เพิ่งโดนลบกลับไปด้วย เพื่อให้ฝั่งหน้าบ้านรู้ว่าลบตัวไหนสำเร็จ
+    return res
+      .status(200)
+      .json({ success: true, message: "User deleted successfully", data });
+  } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
+  }
+});
