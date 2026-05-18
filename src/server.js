@@ -54,6 +54,7 @@ app.get("/", (req, res) => {
 const PORT = 3000;
 
 await connectDB();
+await connectSupabase();
 
 app.listen(PORT, () => {
   console.log(`Server running on PORT:${PORT} ❤️`);
