@@ -24,6 +24,20 @@ app.get("/", (req, res) => {
   });
 });
 
+// Centrailzed error handling middleware
+
+app.use((error, req, res, next) => {
+  console.error(error.stack);
+  res.status(error.status || 500).json({
+    success: false,
+    message: error.message || "Internal Server Error",
+    path: req.originalUrl,
+    method: req.method,
+    timestamp: new Date().toISOString(),
+    stack: error.stack,
+  });
+});
+
 const PORT = 3000;
 
 await connectDB();

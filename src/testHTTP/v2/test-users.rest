@@ -20,7 +20,7 @@ Content-Type: application/json
 }
 
 ### Update a user
-PUT http://localhost:3000/api/v2/users/6a06dcafe8d4c22a3ae9a46f
+PUT http://localhost:3000/api/v2/users/6a0be5d09a59c157896ca9b2
 Content-Type: application/json
 
 {
@@ -29,4 +29,4 @@ Content-Type: application/json
   "password" : "pass123567"
 }
 ### Delete a user
-DELETE http://localhost:3000/api/v2/users/6a06dcafe8d4c22a3ae9a46f
+DELETE http://localhost:3000/api/v2/users/6a06dcd2e8d4c22a3ae9a471

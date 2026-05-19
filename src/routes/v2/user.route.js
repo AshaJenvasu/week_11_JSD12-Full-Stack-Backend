@@ -1,20 +1,16 @@
 import { Router } from "express";
 import User from "../../../src/modules/users/user.model.js";
 import { supabase } from "../../config/supabase.js";
-import { getUsers } from "../../modules/users/users.controller.js";
-import { createUser } from "../../modules/users/users.controller.js";
-import { updateUser } from "../../modules/users/users.controller.js";
-import { deleteUser } from "../../modules/users/users.controller.js";
+import {
+  getUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+} from "../../modules/users/users.controller.js";
 
 export const router = Router();
 
 // MongoDB routes (/api/v2/users)
-
-const userResponse = (doc) => {
-  const user = doc.toObject(); //translate to JS object
-  delete user.password;
-  return user;
-};
 
 router.get("/", getUsers);
 

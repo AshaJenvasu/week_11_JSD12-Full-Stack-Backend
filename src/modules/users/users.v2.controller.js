@@ -1,21 +1,15 @@
 import User from "./user.model.js";
 
-const userResponse = (doc) => {
-  const user = doc.toObject(); //translate to JS object
-  delete user.password;
-  return user;
-};
-
-export const getUsers = async (req, res) => {
+export const getUsers = async (req, res, next) => {
   try {
     const users = await User.find();
     return res.status(200).json({ success: true, data: users });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    next(error);
   }
 };
 
-export const createUser = async (req, res) => {
+export const createUser = async (req, res, next) => {
   const { username, email, password, role } = req.body || {};
 
   if (!username || !email || !password) {
@@ -32,7 +26,8 @@ export const createUser = async (req, res) => {
     const doc = await User.create({ username, email, password, role }); //shorthand
     return res.status(201).json({ success: true, data: userResponse(doc) });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error });
+    // return res.status(400).json({ success: false, error: error });
+    next(error);
   }
 
   //เริ่มต้นให้ max เป็น 0 นะ แล้วไปดู User ทุกคนในลิสต์... ใครมี ID มากกว่า max ปัจจุบัน ก็ให้คนนั้นเป็น max ตัวใหม่แทน... พอไล่ดูจนครบทุกคนแล้ว ได้เลขอะไรมา ก็เอามาบวกเพิ่มอีก 1 เพื่อใช้เป็น ID ใหม่ซะเลย!
@@ -53,7 +48,7 @@ export const createUser = async (req, res) => {
   return res.status(201).json(newUser);
 };
 
-export const updateUser = async (req, res) => {
+export const updateUser = async (req, res, next) => {
   const { username, email, password, role } = req.body || {};
 
   if (!username || !email) {
@@ -81,11 +76,13 @@ export const updateUser = async (req, res) => {
       data: userResponse(updateUser),
     });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error.message });
+    // return res.status(400).json({ success: false, error: error.message });
+
+    next(error);
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req, res, next) => {
   try {
     // 1. ใช้ findByIdAndDelete เพื่อลบข้อมูลตาม ID
     const deletedUser = await User.findByIdAndDelete(req.params.id);
@@ -101,6 +98,7 @@ export const deleteUser = async (req, res) => {
       deletedData: userResponse(deletedUser),
     });
   } catch (error) {
-    return res.status(400).json({ success: false, error: error.message });
+    // return res.status(400).json({ success: false, error: error.message });
+    next(error);
   }
 };
