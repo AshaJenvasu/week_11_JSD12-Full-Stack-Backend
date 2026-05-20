@@ -1,5 +1,4 @@
 import User from "./user.model.js";
-import bcrypt from "bcrypt";
 
 const userResponse = (user) => {
   return {
@@ -42,12 +41,11 @@ export const createUser = async (req, res, next) => {
         .json({ success: false, error: "User already exists" });
     }
 
-    // 3. Hash Password & Save to MongoDB
-    const hashedPassword = await bcrypt.hash(password, 12);
+    // 3. Save to MongoDB
     const doc = await User.create({
       username,
       email,
-      password: hashedPassword,
+      password,
       role,
     });
 
