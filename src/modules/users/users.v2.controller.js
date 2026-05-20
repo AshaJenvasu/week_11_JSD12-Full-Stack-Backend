@@ -1,8 +1,21 @@
 import User from "./user.model.js";
+import bcrypt from "bcrypt";
+
+const userResponse = (user) => {
+  return {
+    id: user._id || user.id,
+    username: user.username,
+    email: user.email,
+    password: user.password,
+    role: user.role,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
+};
 
 export const getUsers = async (req, res, next) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select("+password");
     return res.status(200).json({ success: true, data: users });
   } catch (error) {
     next(error);
@@ -12,40 +25,37 @@ export const getUsers = async (req, res, next) => {
 export const createUser = async (req, res, next) => {
   const { username, email, password, role } = req.body || {};
 
+  // 1. Validate Input Data
   if (!username || !email || !password) {
-    const error = new Error("username, email, and password are required");
-
-    error.name = "ValidationError";
-
-    error.status = 400;
-
-    return res.status(400).json({ success: false, error: error });
+    return res.status(400).json({
+      success: false,
+      error: "username, email, and password are required",
+    });
   }
 
   try {
-    const doc = await User.create({ username, email, password, role }); //shorthand
+    // 2. Check Existing User
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res
+        .status(400)
+        .json({ success: false, error: "User already exists" });
+    }
+
+    // 3. Hash Password & Save to MongoDB
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const doc = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+      role,
+    });
+
+    // 4. Return Success Response
     return res.status(201).json({ success: true, data: userResponse(doc) });
   } catch (error) {
-    // return res.status(400).json({ success: false, error: error });
     next(error);
   }
-
-  //เริ่มต้นให้ max เป็น 0 นะ แล้วไปดู User ทุกคนในลิสต์... ใครมี ID มากกว่า max ปัจจุบัน ก็ให้คนนั้นเป็น max ตัวใหม่แทน... พอไล่ดูจนครบทุกคนแล้ว ได้เลขอะไรมา ก็เอามาบวกเพิ่มอีก 1 เพื่อใช้เป็น ID ใหม่ซะเลย!
-  const nextId = String(
-    (users.reduce(
-      (max, user) =>
-        //Number(u.id): แปลง ID ของ User (ซึ่งมักเป็น String) ให้เป็น "ตัวเลข" ก่อนเพื่อให้นำไปคำนวณได้
-        Math.max(max, Number(user.id)),
-      0,
-    ) || 0) + 1,
-  );
-
-  //this is short hand version of username:username
-  const newUser = { id: nextId, username, email, password };
-
-  users.push(newUser);
-
-  return res.status(201).json(newUser);
 };
 
 export const updateUser = async (req, res, next) => {
@@ -59,7 +69,7 @@ export const updateUser = async (req, res, next) => {
 
   try {
     const updateData = { username, email };
-    if (password) updateData.password = password;
+    if (password) updateData.password = await bcrypt.hash(password, 12);
     if (role) updateData.role = role;
 
     const updateUser = await User.findByIdAndUpdate(req.params.id, updateData, {

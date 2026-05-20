@@ -29,4 +29,13 @@ Content-Type: application/json
   "password" : "pass123567"
 }
 ### Delete a user
-DELETE http://localhost:3000/api/v2/users/6a06dcd2e8d4c22a3ae9a471
+DELETE http://localhost:3000/api/v2/users/6a0d4106cbb2d40c3ca5a677
+
+### Login user
+POST http://localhost:3000/api/v2/auth/login
+Content-Type: application/json
+
+{
+  "email": "akane@example.com",
+  "password": "pass123567"
+}

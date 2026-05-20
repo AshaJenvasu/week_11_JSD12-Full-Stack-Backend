@@ -6,7 +6,7 @@ import {
   createUser,
   updateUser,
   deleteUser,
-} from "../../modules/users/users.controller.js";
+} from "../../modules/users/users.v2.controller.js";
 
 export const router = Router();
 
