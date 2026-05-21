@@ -14,6 +14,8 @@ app.use(cors());
 
 //change JSON to JS
 app.use(express.json());
+
+//ด่านสแกนกระเป๋าหาคุกกี้
 app.use(cookieParser());
 
 //月の門

@@ -1,0 +1,56 @@
+@baseUrl = http://localhost:3000/api/v2/users
+
+@validEmail    = akane@example.com
+@validPassword = pass123567
+
+###1. Login - success
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "{{validEmail}}",
+    "password": "{{validPassword}}"
+}
+
+### 2. Login fail
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "{{validEmail}}"
+}
+
+### 3. Login fail wrong pass
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "{{validEmail}}",
+    "password": "wrongpassword"
+}
+
+### 4. Login doesnotexist email
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "doesnotexist@example.com",
+    "password": "password123"
+}
+
+### 5. Check Session success
+GET {{baseUrl}}/auth/me
+
+### 6. Check Session no token
+GET {{baseUrl}}/auth/me
+Cookie: accessToken=
+
+#### 7. Check Session expired/invalid token 
+GET {{baseUrl}}/auth/me
+Cookie: accessToken=this.is.not.a.valid.jwt
+
+### 8. Log out Success
+POST {{baseUrl}}/auth/logout
+
+### 9. Check Session After Logout No Token
+GET {{baseUrl}}/auth/me
