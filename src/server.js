@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import { users } from "./fakeData/fakeUsers.js";
 import { products } from "./fakeData/fakeProducts.js";
@@ -13,6 +14,7 @@ app.use(cors());
 
 //change JSON to JS
 app.use(express.json());
+app.use(cookieParser());
 
 //月の門
 app.use("/api", apiRoutes);

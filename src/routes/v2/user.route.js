@@ -6,19 +6,36 @@ import {
   createUser,
   updateUser,
   deleteUser,
+  loginUser,
+  checkUser,
+  logoutUser,
 } from "../../modules/users/users.v2.controller.js";
+import { authUser } from "../../middlewares/auth.js";
 
 export const router = Router();
 
 // MongoDB routes (/api/v2/users)
 
+// Read all users
 router.get("/", getUsers);
 
+// Create a new user
 router.post("/", createUser);
 
+// Update a user
 router.put("/:id", updateUser);
 
+// Delete a user
 router.delete("/:id", deleteUser);
+
+// Login
+router.post("/login", loginUser);
+
+// Check user session/token
+router.get("/auth/me", authUser, checkUser);
+
+//Logout a user
+router.post("/auth/logout", logoutUser);
 
 // Supabase / PostgreSQL routes (/api/v2/users/pg)
 // Password is excluded from SELECT
